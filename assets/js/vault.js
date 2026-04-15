@@ -123,7 +123,7 @@ function dashboard() {
   <div class="grid-4" style="margin-bottom:20px">
     <div class="stat-card">
       <div class="stat-label">Today Revenue</div>
-      <div class="stat-value">${fmt(todayRevenue)} EGP</div>
+      <div class="stat-value">${fmt(todayRevenue)} $ USD</div>
       <div class="stat-sub">${todayOrders.filter(o=>o.status==='done').length} orders delivered</div>
     </div>
     <div class="stat-card">
@@ -138,7 +138,7 @@ function dashboard() {
     </div>
     <div class="stat-card">
       <div class="stat-label">Total Revenue</div>
-      <div class="stat-value" style="color:var(--green)">${fmt(totalRevenue)} EGP</div>
+      <div class="stat-value" style="color:var(--green)">${fmt(totalRevenue)} $ USD</div>
       <div class="stat-sub">All time</div>
     </div>
   </div>
@@ -158,7 +158,7 @@ function dashboard() {
         const cnt = state.orders.filter(o=>o.deliveryManId===dm.id&&o.status==='done').length;
         return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border-row)">
           <div><div style="font-size:13px;font-weight:500">${esc(dm.name)}</div><div style="font-size:11px;color:var(--text-hint)">${cnt} deliveries</div></div>
-          <span style="font-size:13px;font-weight:700;color:var(--green)">${fmt(rev)} EGP</span>
+          <span style="font-size:13px;font-weight:700;color:var(--green)">${fmt(rev)} $ USD</span>
         </div>`;
       }).join('') : '<div class="empty-state" style="padding:20px 0"><div class="empty-icon">🚚</div>No delivery men added</div>'}
     </div>
@@ -173,7 +173,7 @@ function dashboard() {
           <td><span class="tag">${o.id.slice(-5)}</span></td>
           <td style="font-weight:500">${esc(dm?dm.name:'Unknown')}</td>
           <td style="color:var(--text-muted)">${o.items.length} item(s)</td>
-          <td style="font-weight:700;color:var(--accent)">${fmt(orderTotal(o))} EGP</td>
+          <td style="font-weight:700;color:var(--accent)">${fmt(orderTotal(o))} $ USD</td>
           <td><span class="tag">${fmtTime(o.createdAt)}</span></td>
           <td><div class="action-group">
             <button class="btn btn-success btn-xs" onclick="setOrderStatus('${o.id}','done')">✓ Done</button>
@@ -238,13 +238,13 @@ function newOrder() {
         <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
           <select class="inp" id="ob-item-sel" style="flex:1" onchange="obAddItem()">
             <option value="">+ Add item to order...</option>
-            ${state.items.map(it=>`<option value="${it.id}">${esc(it.name)} — ${fmt(it.price)} EGP</option>`).join('')}
+            ${state.items.map(it=>`<option value="${it.id}">${esc(it.name)} — ${fmt(it.price)} $ USD</option>`).join('')}
           </select>
         </div>
         <hr class="divider">
         <div style="display:flex;justify-content:space-between;align-items:center">
           <span style="font-size:14px;font-weight:600;color:var(--text-muted)">Order Total</span>
-          <span id="ob-total" style="font-size:20px;font-weight:700;color:var(--accent)">0.00 EGP</span>
+          <span id="ob-total" style="font-size:20px;font-weight:700;color:var(--accent)">0.00 $ USD</span>
         </div>
         <button class="btn btn-primary" style="width:100%;margin-top:14px;height:42px;font-size:15px" onclick="submitOrder()">🚀 Place Order</button>
       </div>
@@ -316,7 +316,7 @@ function renderObItems() {
   if (!listEl) return;
   if (!orderBuilder.items.length) {
     listEl.innerHTML=`<div style="font-size:13px;color:var(--text-hint);text-align:center;padding:16px">Click items on the right or use the dropdown to add them here.</div>`;
-    if(totalEl) totalEl.textContent='0.00 EGP';
+    if(totalEl) totalEl.textContent='0.00 $ USD';
     return;
   }
   let total=0;
@@ -329,12 +329,12 @@ function renderObItems() {
       <input class="inp" type="number" min="1" value="${oi.qty}" style="height:28px;font-size:12px" onchange="obChangeQty('${oi.itemId}',this.value)">
       <div>
         <div style="font-size:10px;color:var(--text-hint)">@ ${fmt(oi.price)}</div>
-        <div class="item-subtotal">${fmt(sub)} EGP</div>
+        <div class="item-subtotal">${fmt(sub)} $ USD</div>
       </div>
       <button class="btn btn-danger btn-xs btn-icon" onclick="obRemoveItem('${oi.itemId}')" title="Remove">✕</button>
     </div>`;
   }).join('');
-  if(totalEl) totalEl.textContent=fmt(total)+' EGP';
+  if(totalEl) totalEl.textContent=fmt(total)+' $ USD';
 }
 
 function obChangeQty(itemId, val) {
@@ -360,7 +360,7 @@ function submitOrder() {
   };
   state.orders.unshift(order);
   const dm=state.deliveryMen.find(d=>d.id===dmId);
-  addHist('add',`New order placed via ${dm?dm.name:'?'} — ${order.items.length} items — ${fmt(orderTotal(order))} EGP`,snap);
+  addHist('add',`New order placed via ${dm?dm.name:'?'} — ${order.items.length} items — ${fmt(orderTotal(order))} $ USD`,snap);
   persist();
   alert('✅ Order placed successfully!');
   navigate('orders');
@@ -420,7 +420,7 @@ function renderOrdersTable() {
         <td><span class="tag">${o.id.slice(-5)}</span></td>
         <td style="font-weight:500">${esc(dm?dm.name:'Unknown')}</td>
         <td style="color:var(--text-muted)">${o.items.map(oi=>{const it=state.items.find(i=>i.id===oi.itemId);return it?esc(it.name):'?';}).join(', ')}</td>
-        <td style="font-weight:700;color:var(--accent)">${fmt(orderTotal(o))} EGP</td>
+        <td style="font-weight:700;color:var(--accent)">${fmt(orderTotal(o))} $ USD</td>
         <td><span class="badge ${badgeClass}">${o.status}</span></td>
         <td><span class="tag">${fmtDateTime(o.createdAt)}</span></td>
         <td><div class="action-group">
@@ -474,11 +474,11 @@ function viewOrder(id) {
         const it=state.items.find(i=>i.id===oi.itemId);
         return `<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border-row)">
           <span>${esc(it?it.name:'?')} × ${oi.qty}</span>
-          <span style="font-weight:600">${fmt(oi.price*oi.qty)} EGP</span>
+          <span style="font-weight:600">${fmt(oi.price*oi.qty)} $ USD</span>
         </div>`;
       }).join('')}
       <div style="display:flex;justify-content:space-between;padding:10px 0;font-weight:700;font-size:15px">
-        <span>Total</span><span style="color:var(--accent)">${fmt(orderTotal(o))} EGP</span>
+        <span>Total</span><span style="color:var(--accent)">${fmt(orderTotal(o))} $ USD</span>
       </div>
     </div>
     ${o.note?`<div style="margin-bottom:14px"><div style="font-size:12px;color:var(--text-hint);margin-bottom:4px">Note</div><div>${esc(o.note)}</div></div>`:''}
@@ -551,10 +551,10 @@ function analyticsPage() {
   pc.innerHTML=`
   <div class="section-title">📈 Analytics Dashboard</div>
   <div class="grid-4" style="margin-bottom:20px">
-    <div class="stat-card"><div class="stat-label">Today</div><div class="stat-value">${fmt(revenueFor(todayO))} <span style="font-size:14px;font-weight:500">EGP</span></div><div class="stat-sub">${todayO.length} orders</div></div>
-    <div class="stat-card"><div class="stat-label">This Week</div><div class="stat-value">${fmt(revenueFor(weekO))} <span style="font-size:14px;font-weight:500">EGP</span></div><div class="stat-sub">${weekO.length} orders</div></div>
-    <div class="stat-card"><div class="stat-label">This Month</div><div class="stat-value">${fmt(revenueFor(monthO))} <span style="font-size:14px;font-weight:500">EGP</span></div><div class="stat-sub">${monthO.length} orders</div></div>
-    <div class="stat-card"><div class="stat-label">All Time</div><div class="stat-value">${fmt(revenueFor(doneOrders))} <span style="font-size:14px;font-weight:500">EGP</span></div><div class="stat-sub">${doneOrders.length} orders total</div></div>
+    <div class="stat-card"><div class="stat-label">Today</div><div class="stat-value">${fmt(revenueFor(todayO))} <span style="font-size:14px;font-weight:500">$ USD</span></div><div class="stat-sub">${todayO.length} orders</div></div>
+    <div class="stat-card"><div class="stat-label">This Week</div><div class="stat-value">${fmt(revenueFor(weekO))} <span style="font-size:14px;font-weight:500">$ USD</span></div><div class="stat-sub">${weekO.length} orders</div></div>
+    <div class="stat-card"><div class="stat-label">This Month</div><div class="stat-value">${fmt(revenueFor(monthO))} <span style="font-size:14px;font-weight:500">$ USD</span></div><div class="stat-sub">${monthO.length} orders</div></div>
+    <div class="stat-card"><div class="stat-label">All Time</div><div class="stat-value">${fmt(revenueFor(doneOrders))} <span style="font-size:14px;font-weight:500">$ USD</span></div><div class="stat-sub">${doneOrders.length} orders total</div></div>
   </div>
   <div class="grid-2" style="margin-bottom:20px">
     <div class="card">
@@ -635,7 +635,7 @@ function itemsPage() {
       <div style="display:flex;flex-direction:column;gap:10px">
         <input type="hidden" id="item-edit-id">
         <div class="field"><label>Item Name</label><input class="inp" id="item-name" placeholder="e.g. Burger"></div>
-        <div class="field"><label>Price (EGP)</label><input class="inp" id="item-price" type="number" min="0" step="0.5" placeholder="0.00"></div>
+        <div class="field"><label>Price ($ USD)</label><input class="inp" id="item-price" type="number" min="0" step="0.5" placeholder="0.00"></div>
         <div class="field"><label>Category</label><input class="inp" id="item-cat" placeholder="e.g. Food, Drinks, Sides"></div>
         <div class="flex-row" style="margin-top:4px">
           <button class="btn btn-primary" onclick="saveItem()" style="flex:1">Save Item</button>
@@ -661,7 +661,7 @@ function renderItemsTable() {
     <thead><tr><th>Name</th><th>Price</th><th>Category</th><th></th></tr></thead>
     <tbody>${filtered.map(it=>`<tr>
       <td style="font-weight:500">${esc(it.name)}</td>
-      <td style="font-weight:700;color:var(--accent)">${fmt(it.price)} EGP</td>
+      <td style="font-weight:700;color:var(--accent)">${fmt(it.price)} $ USD</td>
       <td><span class="tag">${esc(it.category||'—')}</span></td>
       <td><div class="action-group">
         <button class="btn btn-ghost btn-xs" onclick="editItem('${it.id}')">Edit</button>
@@ -685,7 +685,7 @@ function saveItem() {
     addHist('edit',`Updated item: ${name}`,snap);
   } else {
     state.items.push({id:uid(),name,price,category:cat});
-    addHist('add',`Added item: ${name} @ ${fmt(price)} EGP`,snap);
+    addHist('add',`Added item: ${name} @ ${fmt(price)} $ USD`,snap);
   }
   persist(); clearItemForm(); renderItemsTable();
 }
@@ -758,7 +758,7 @@ function renderDMTable() {
         <td style="font-weight:500">${esc(dm.name)}</td>
         <td style="color:var(--text-muted)">${esc(dm.phone||'—')}</td>
         <td><span class="badge badge-info">${doneOrd.length}</span></td>
-        <td style="font-weight:700;color:var(--green)">${fmt(rev)} EGP</td>
+        <td style="font-weight:700;color:var(--green)">${fmt(rev)} $ USD</td>
         <td><div class="action-group">
           <button class="btn btn-ghost btn-xs" onclick="editDM('${dm.id}')">Edit</button>
           <button class="btn btn-danger btn-xs" onclick="deleteDM('${dm.id}')">×</button>
@@ -1204,13 +1204,13 @@ function exportOrdersPDF(){
       doc.setFont('helvetica','normal');doc.setTextColor(40,40,40);doc.setFontSize(8);
       doc.text(`${it?it.name:'?'} × ${oi.qty}`,mx+6,iy);
       doc.setFont('helvetica','bold');doc.setTextColor(24,95,165);
-      doc.text(`${fmt(oi.price*oi.qty)} EGP`,pw-mx-4,iy,{align:'right'});
+      doc.text(`${fmt(oi.price*oi.qty)} $ USD`,pw-mx-4,iy,{align:'right'});
       iy+=7;
     });
     doc.setDrawColor(190,210,240);doc.setLineWidth(0.15);doc.line(mx+4,iy,mx+cw-4,iy);
     doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(17,17,17);
     doc.text('Total',mx+6,iy+5);doc.setTextColor(24,95,165);
-    doc.text(`${fmt(total)} EGP`,pw-mx-4,iy+5,{align:'right'});
+    doc.text(`${fmt(total)} $ USD`,pw-mx-4,iy+5,{align:'right'});
     y+=cardH+5;
   });
   doc.save('vault-orders.pdf');
